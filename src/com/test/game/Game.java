@@ -1,9 +1,12 @@
 package com.test.game;
 
+import com.test.IO.Input;
 import com.test.display.Display;
+import com.test.graphics.TextureAtlas;
 import com.test.utils.Time;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Game implements Runnable {
 
@@ -16,20 +19,31 @@ public class Game implements Runnable {
     public static final float UPDATE_RATE = 60.0f;
     public static final float UPDATE_INTERVAL = Time.SECOND / UPDATE_RATE;
     public static final long IDLE_TIME = 1;//miliseconds
+    public static final String ATLAS_FILE_NAME = "texture_atlas.png";
 
     private boolean running;
     private Thread gameThread;
     private Graphics2D graphics;
+    private Input input;
+    private TextureAtlas atlas;
+    private SpriteSheet sheet;
+    private Sprite sprite;
 
     float x = 350;
     float y = 250;
     float delta = 0;
     float radius = 50;
+    float speed = 3;
 
     public Game(){
         running = false;
         Display.create(WIDTH, HEIGHT, title, CLEAR_COLOR, NUM_BUFFERS);
         graphics = Display.getGraphics();
+        input = new Input();
+        Display.addInputListener(input);
+        atlas = new TextureAtlas(ATLAS_FILE_NAME);
+        sheet = new SpriteSheet(atlas.cut(8 * 16, 5 * 16, 16 * 2, 16), 2, 16);
+        sprite = new Sprite(sheet, 1);
     }
 
     public synchronized void start(){
@@ -51,15 +65,15 @@ public class Game implements Runnable {
     }
 
     public void update(){
-
-        delta += 0.02f;
-
+        if (input.getKey(KeyEvent.VK_UP)) y -= speed;
+        if (input.getKey(KeyEvent.VK_DOWN)) y += speed;
+        if (input.getKey(KeyEvent.VK_LEFT)) x -= speed;
+        if (input.getKey(KeyEvent.VK_RIGHT)) x += speed;
     }
 
     public void render(){
         Display.clear();
-        graphics.setColor(Color.white);
-        graphics.fillOval((int)(x + (Math.sin(delta) * 200)), (int)(y), (int) (radius * 2), (int) (radius * 2));
+        sprite.render(graphics, x, y);
         Display.swapBuffers();
     }
 
