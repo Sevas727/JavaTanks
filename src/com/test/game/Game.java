@@ -2,6 +2,7 @@ package com.test.game;
 
 import com.test.IO.Input;
 import com.test.display.Display;
+import com.test.game.level.Level;
 import com.test.graphics.Sprite;
 import com.test.graphics.SpriteSheet;
 import com.test.graphics.TextureAtlas;
@@ -29,6 +30,7 @@ public class Game implements Runnable {
     private Input input;
     private TextureAtlas atlas;
     private Player player;
+    private Level level;
 
     public Game(){
         running = false;
@@ -38,6 +40,7 @@ public class Game implements Runnable {
         Display.addInputListener(input);
         atlas = new TextureAtlas(ATLAS_FILE_NAME);
         player = new Player(300, 300, 2, 3, atlas);
+        level = new Level(atlas);
     }
 
     public synchronized void start(){
@@ -60,11 +63,14 @@ public class Game implements Runnable {
 
     public void update(){
         player.update(input);
+        level.update();
     }
 
     public void render(){
         Display.clear();
+        level.render(graphics);
         player.render(graphics);
+        level.renderGrass(graphics);
         Display.swapBuffers();
     }
 
