@@ -19,6 +19,27 @@ public class Tile {
         g.drawImage(image, x, y, null);
     }
 
+    public void transparentRender(Graphics2D g, float x, float y){
+        g.drawImage(makeImageTranslucent(image, 0.80), (int)(x), (int)(y), null);
+    }
+
+    public static BufferedImage makeImageTranslucent(BufferedImage source,
+                                                     double alpha) {
+        BufferedImage target = new BufferedImage(source.getWidth(),
+                source.getHeight(), java.awt.Transparency.TRANSLUCENT);
+        // Get the images graphics
+        Graphics2D g = target.createGraphics();
+        // Set the Graphics composite to Alpha
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                (float) alpha));
+        // Draw the image into the prepared reciver image
+        g.drawImage(source, null, 0, 0);
+        // let go of all system resources in this Graphics
+        g.dispose();
+        // Return the image
+        return target;
+    }
+
     protected TileType type() {
         return type;
     }

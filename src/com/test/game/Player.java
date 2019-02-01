@@ -1,6 +1,8 @@
 package com.test.game;
 
 import com.test.IO.Input;
+import com.test.game.level.Level;
+import com.test.game.level.TileType;
 import com.test.graphics.Sprite;
 import com.test.graphics.SpriteSheet;
 import com.test.graphics.TextureAtlas;
@@ -37,17 +39,19 @@ public class Player extends Entity {
     }
 
     private Heading heading;
+    private Level level;
     private Map<Heading, Sprite> spriteMap;
     private float scale;
     private float speed;
 
-    public Player(float x, float y, float scale, float speed, TextureAtlas atlas) {
+    public Player(float x, float y, float scale, float speed, TextureAtlas atlas, Level level) {
         super(EntityType.Player, x, y);
 
         heading = Heading.NORTH;
         spriteMap = new HashMap<Heading, Sprite>();
         this.scale = scale;
         this.speed = speed;
+        this.level = level;
 
         for (Heading h : Heading.values()){
             SpriteSheet sheet = new SpriteSheet(h.texture(atlas), SPRITES_PER_HEADING, SPRITE_SCALE);
@@ -88,8 +92,18 @@ public class Player extends Entity {
             newY = Game.HEIGHT - SPRITE_SCALE * scale - 1;
         }
 
+        if (
+                canTru(level.checkTileTypeByCoords(newX, newY))
+        ) {
+
+        }
+
         x = newX;
         y = newY;
+    }
+
+    public static boolean canTru(TileType type){
+        return type == TileType.BRICK || type == TileType.METAL || type == TileType.WATER;
     }
 
     public void render(Graphics2D g){
